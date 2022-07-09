@@ -24,8 +24,6 @@ namespace paint_queue
 
             if (Graphics != null)
             {
-                Debug.WriteLine(Graphics.ClipBounds);
-                Debug.WriteLine(Graphics.VisibleClipBounds);
                 var rect = Graphics.VisibleClipBounds;
                 using (var pen = new Pen(CurrentTestColor, 2f))
                 {
