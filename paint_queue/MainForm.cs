@@ -16,12 +16,11 @@ namespace paint_queue
                 Refresh();
                 Text = CurrentTestColor.ToString();
             };
+
             // Draw diagonal line adding 25 to offset each time.
             buttonDraw.Click += (sender, e) =>
-            {
-                GetNextTestColor();
                 _paint.DrawDiagonal(GetNextTestColor(), offsetX: 25 * _testCount++);
-            };
+
             buttonClear.Click += (sender, e) =>
             {
                 _paint.Clear();
@@ -33,8 +32,19 @@ namespace paint_queue
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            _paint.PaintAll(e.Graphics, always: false);
+            _paint.PaintAll(e.Graphics, always: _always);
+            _always = false;
         }
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            if(!_always)
+            {
+                _always = true;
+                Refresh();
+            }
+        }
+        bool _always = false;
 
         internal Color GetNextTestColor()
         {
