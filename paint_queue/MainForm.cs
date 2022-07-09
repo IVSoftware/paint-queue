@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace paint_queue
@@ -13,20 +14,21 @@ namespace paint_queue
             {
                 // Causes the control to repaint.
                 Refresh();
-                Text = _paint.CurrentTestColor.ToString();
+                Text = CurrentTestColor.ToString();
             };
             // Draw diagonal line adding 25 to offset each time.
             buttonDraw.Click += (sender, e) =>
             {
-                _paint.GetNextTestColor();
-                var rect = ClientRectangle;
-                var start = new PointF(
-                        rect.X + (_testCount * 25),
-                        rect.Y);
-                var end = new PointF(
-                        rect.X + rect.Width + (_testCount * 25),
-                        rect.Y + rect.Height);
-                _paint.Drawline(_paint.CurrentTestColor, start, end);
+                GetNextTestColor();
+                //var rect = ClientRectangle;
+                //var start = new PointF(
+                //        rect.X + (_testCount * 25),
+                //        rect.Y);
+                //var end = new PointF(
+                //        rect.X + rect.Width + (_testCount * 25),
+                //        rect.Y + rect.Height);
+                //_paint.Drawline(_paint.CurrentTestColor, start, end);
+                _paint.DrawDiagonal(GetNextTestColor(), offsetX: 25 * _testCount++);
                 _testCount++;
             };
             buttonClear.Click += (sender, e) =>
@@ -46,5 +48,20 @@ namespace paint_queue
                 _paint.Modified = false;
             }
         }
+
+        internal Color GetNextTestColor()
+        {
+            CurrentTestColor = _knownColors[_randomColorForTest.Next(_knownColors.Length)];
+            return CurrentTestColor; // For convenience
+        }
+
+        // T E S T I N G
+        Color[] _knownColors { get; } =
+                Enum.GetValues(typeof(KnownColor))
+                .Cast<KnownColor>()
+                .Select(known => Color.FromKnownColor(known))
+                .ToArray();
+        public Color CurrentTestColor { get; private set; }
+        Random _randomColorForTest = new Random();
     }
 }

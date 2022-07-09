@@ -34,11 +34,32 @@ namespace paint_queue
                 PaintOp = PaintOp.Clear,
             });
         }
+        public void DrawDiagonal(Color color, float offsetX = 0, float offsetY = 0) =>
+            Add(new PaintClassContext
+            {
+                PaintOp = PaintOp.DrawDiagonal,
+                Color = color,
+                OffsetX = offsetX,
+                OffsetY = offsetY,
+            });
 
-        private void paint(Graphics graphics,  PaintClassContext context)
+        private void paint(Graphics graphics, PaintClassContext context)
         {
             switch (context.PaintOp)
             {
+                case PaintOp.DrawDiagonal:
+                    using (var pen = new Pen(context.Color, 2f))
+                    {
+                        var rect = graphics.VisibleClipBounds;
+                        var diagonalStart = new PointF(
+                                rect.X + context.OffsetX,
+                                rect.Y + context.OffsetY);
+                        var diagonalEnd = new PointF(
+                                rect.X + rect.Width + context.OffsetX,
+                                rect.Y + rect.Height + context.OffsetY);
+                        graphics.DrawLine(pen, diagonalStart, diagonalEnd);
+                    }
+                    break;
                 case PaintOp.DrawLine:
                     using (var pen = new Pen(context.Color, 2f))
                     {
@@ -64,18 +85,6 @@ namespace paint_queue
                 paint(graphics, context);
             }
         }
-
-        internal void GetNextTestColor() =>
-            CurrentTestColor = _knownColors[_randomColorForTest.Next(_knownColors.Length)];
-
-        // T E S T I N G
-        Color[] _knownColors { get; } =
-                Enum.GetValues(typeof(KnownColor))
-                .Cast<KnownColor>()
-                .Select(known=>Color.FromKnownColor(known))
-                .ToArray();
-        public Color CurrentTestColor { get; private set; }
-        Random _randomColorForTest = new Random();
     }
     enum PaintOp{ DrawLine, Clear, DrawDiagonal}
     class PaintClassContext
@@ -84,5 +93,7 @@ namespace paint_queue
         public Color Color { get; set; }
         public PointF Start { get; set; }
         public PointF End { get; set; }
+        public float OffsetX { get; set; }
+        public float OffsetY { get; set; }
     }
 }
