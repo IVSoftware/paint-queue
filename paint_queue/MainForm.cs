@@ -18,16 +18,26 @@ namespace paint_queue
             };
 
             // Draw diagonal line adding 25 to offset each time.
-            buttonDraw.Click += (sender, e) =>
-                _paint.DrawDiagonal(GetNextTestColor(), offsetX: 25 * _testCount++);
+            buttonDiag.Click += (sender, e) =>
+                _paint.DrawDiagonal(GetNextTestColor(), offsetX: 25 * _testCountDiag++);
+
+            buttonLine.Click += (sender, e) =>
+            {
+                var offsetY = 25 * _testCountLine++;
+                _paint.Drawline(
+                    GetNextTestColor(),
+                    new PointF(0, 100 + offsetY),
+                    new PointF(ClientRectangle.Width, 100 + offsetY));
+            };
 
             buttonClear.Click += (sender, e) =>
             {
                 _paint.Clear();
-                _testCount = 0;
+                _testCountDiag = _testCountLine = 0;
             };
         }
-        int _testCount = 0;
+        int _testCountDiag = 0;
+        int _testCountLine = 0;
         PaintClass _paint = new PaintClass();
         protected override void OnPaint(PaintEventArgs e)
         {
