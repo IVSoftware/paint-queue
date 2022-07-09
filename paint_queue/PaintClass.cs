@@ -7,18 +7,18 @@ using System.Windows.Forms;
 
 namespace paint_queue
 {
-    class PaintClass : Queue<Action>
+    class PaintClass : List<Action>
     {
         public Graphics Graphics { get; set; }
-        public new void Enqueue(Action action)
+        public new void Add(Action action)
         {
-            base.Enqueue(action);
+            base.Add(action);
             Refresh?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler Refresh;
 
-        public void Drawline()
+        public void Drawline(PointF start, PointF end)
         {
             CurrentTestColor = _knownColors[_randomColorForTest.Next(_knownColors.Length)];                
 
@@ -27,10 +27,10 @@ namespace paint_queue
                 var rect = Graphics.VisibleClipBounds;
                 using (var pen = new Pen(CurrentTestColor, 2f))
                 {
-                    var start = new PointF(
+                    start = new PointF(
                         rect.X,
                         rect.Y);
-                    var end = new PointF(
+                    end = new PointF(
                         rect.X + rect.Width,
                         rect.Y + rect.Height);
                     Graphics.DrawLine(pen, start, end);

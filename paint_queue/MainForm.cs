@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace paint_queue
@@ -15,7 +16,15 @@ namespace paint_queue
             };
             buttonDraw.Click += (sender, e) =>
             {
-                _paint.Enqueue(() => _paint.Drawline());
+                var rect = ClientRectangle;
+                var start = new PointF(
+                        rect.X,
+                        rect.Y);
+                var end = new PointF(
+                        rect.X + rect.Width,
+                        rect.Y + rect.Height);
+
+                _paint.Add(() => _paint.Drawline(start, end));
             };
         }
         PaintClass _paint = new PaintClass();
@@ -25,7 +34,7 @@ namespace paint_queue
             if(_paint.Count != 0)
             {
                 _paint.Graphics = e.Graphics;
-                while(_paint.TryDequeue(out Action action))
+                foreach (var action in _paint)
                 {
                     action();
                 }
