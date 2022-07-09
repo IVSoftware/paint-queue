@@ -7,36 +7,67 @@ using System.Windows.Forms;
 
 namespace paint_queue
 {
-    class PaintClass : List<Action>
+    class PaintClass : List<PaintClassContext>
     {
-        public Graphics Graphics { get; set; }
-        public new void Add(Action action)
+        public new void Add(PaintClassContext context)
         {
-            base.Add(action);
+            base.Add(context);
+            Modified = true;
             Refresh?.Invoke(this, EventArgs.Empty);
         }
-
         public event EventHandler Refresh;
-
-        public void Drawline(PointF start, PointF end)
-        {
-            CurrentTestColor = _knownColors[_randomColorForTest.Next(_knownColors.Length)];                
-
-            if (Graphics != null)
+        public bool Modified { get; set; }
+        public void Drawline(Color color, PointF start, PointF end) =>
+            Add(new PaintClassContext
             {
-                var rect = Graphics.VisibleClipBounds;
-                using (var pen = new Pen(CurrentTestColor, 2f))
-                {
-                    start = new PointF(
-                        rect.X,
-                        rect.Y);
-                    end = new PointF(
-                        rect.X + rect.Width,
-                        rect.Y + rect.Height);
-                    Graphics.DrawLine(pen, start, end);
-                }
+                PaintOp = PaintOp.DrawLine,
+                Color = color,
+                Start = start,
+                End = end,
+            });
+
+        public new void Clear()
+        {
+            base.Clear();
+            Add(new PaintClassContext
+            {
+                PaintOp = PaintOp.Clear,
+            });
+        }
+
+        private void paint(Graphics graphics,  PaintClassContext context)
+        {
+            switch (context.PaintOp)
+            {
+                case PaintOp.DrawLine:
+                    using (var pen = new Pen(context.Color, 2f))
+                    {
+                        graphics.DrawLine(pen, context.Start, context.End);
+                    }
+                    break;
+                case PaintOp.Clear:
+                    using (var brush = new SolidBrush(Color.Transparent))
+                    {
+                        graphics.FillRectangle(brush, graphics.VisibleClipBounds);
+                    }
+                    base.Clear(); // Remove the clear action
+                    break;
+                default:
+                    throw new NotImplementedException("ToDo");
             }
         }
+
+        internal void PaintAll(Graphics graphics)
+        {
+            foreach (var context in this.ToArray())
+            {
+                paint(graphics, context);
+            }
+        }
+
+        internal void GetNextTestColor() =>
+            CurrentTestColor = _knownColors[_randomColorForTest.Next(_knownColors.Length)];
+
         // T E S T I N G
         Color[] _knownColors { get; } =
                 Enum.GetValues(typeof(KnownColor))
@@ -45,5 +76,13 @@ namespace paint_queue
                 .ToArray();
         public Color CurrentTestColor { get; private set; }
         Random _randomColorForTest = new Random();
+    }
+    enum PaintOp{ DrawLine, Clear, DrawDiagonal}
+    class PaintClassContext
+    {
+        public PaintOp PaintOp { get; set; }
+        public Color Color { get; set; }
+        public PointF Start { get; set; }
+        public PointF End { get; set; }
     }
 }

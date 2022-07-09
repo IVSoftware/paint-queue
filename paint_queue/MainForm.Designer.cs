@@ -30,6 +30,7 @@ namespace paint_queue
         private void InitializeComponent()
         {
             this.buttonDraw = new System.Windows.Forms.Button();
+            this.buttonClear = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonDraw
@@ -42,11 +43,22 @@ namespace paint_queue
             this.buttonDraw.Text = "Draw";
             this.buttonDraw.UseVisualStyleBackColor = true;
             // 
+            // buttonClear
+            // 
+            this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonClear.Location = new System.Drawing.Point(139, 198);
+            this.buttonClear.Name = "buttonClear";
+            this.buttonClear.Size = new System.Drawing.Size(112, 34);
+            this.buttonClear.TabIndex = 0;
+            this.buttonClear.Text = "Clear";
+            this.buttonClear.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(478, 244);
+            this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.buttonDraw);
             this.Name = "MainForm";
             this.Text = "Main Form";
@@ -57,6 +69,7 @@ namespace paint_queue
         #endregion
 
         private System.Windows.Forms.Button buttonDraw;
+        private System.Windows.Forms.Button buttonClear;
     }
 }
 
