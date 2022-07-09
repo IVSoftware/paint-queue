@@ -12,11 +12,11 @@ namespace paint_queue
         public new void Add(PaintClassContext context)
         {
             base.Add(context);
-            Modified = true;
+            _modified = true;
             Refresh?.Invoke(this, EventArgs.Empty);
         }
         public event EventHandler Refresh;
-        public bool Modified { get; set; }
+        private bool _modified = false;
         public void Drawline(Color color, PointF start, PointF end) =>
             Add(new PaintClassContext
             {
@@ -78,12 +78,16 @@ namespace paint_queue
             }
         }
 
-        internal void PaintAll(Graphics graphics)
+        internal void PaintAll(Graphics graphics, bool always = false)
         {
-            foreach (var context in this.ToArray())
+            if (always || _modified)
             {
-                paint(graphics, context);
+                foreach (var context in this.ToArray())
+                {
+                    paint(graphics, context);
+                }
             }
+            _modified = false;
         }
     }
     enum PaintOp{ DrawLine, Clear, DrawDiagonal}

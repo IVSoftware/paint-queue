@@ -20,16 +20,7 @@ namespace paint_queue
             buttonDraw.Click += (sender, e) =>
             {
                 GetNextTestColor();
-                //var rect = ClientRectangle;
-                //var start = new PointF(
-                //        rect.X + (_testCount * 25),
-                //        rect.Y);
-                //var end = new PointF(
-                //        rect.X + rect.Width + (_testCount * 25),
-                //        rect.Y + rect.Height);
-                //_paint.Drawline(_paint.CurrentTestColor, start, end);
                 _paint.DrawDiagonal(GetNextTestColor(), offsetX: 25 * _testCount++);
-                _testCount++;
             };
             buttonClear.Click += (sender, e) =>
             {
@@ -42,11 +33,7 @@ namespace paint_queue
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            if(_paint.Modified)
-            {
-                _paint.PaintAll(e.Graphics);
-                _paint.Modified = false;
-            }
+            _paint.PaintAll(e.Graphics, always: false);
         }
 
         internal Color GetNextTestColor()
