@@ -34,6 +34,7 @@ namespace paint_queue
             // 
             // buttonDraw
             // 
+            this.buttonDraw.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonDraw.Location = new System.Drawing.Point(12, 198);
             this.buttonDraw.Name = "buttonDraw";
             this.buttonDraw.Size = new System.Drawing.Size(112, 34);
